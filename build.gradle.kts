@@ -97,7 +97,3 @@ jib {
         creationTime.set("USE_CURRENT_TIMESTAMP")
     }
 }
-
-//todo vk: add EHACHE
-//todo vk: add HATEOAS
-//todo vk: add resilience4j
