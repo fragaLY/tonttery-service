@@ -14,5 +14,6 @@
 //migration to java 21
 
 [SECURITY-POLICY](/SECURITY.md)
+[LICENSE](/LICENSE.md)
 
 Copyright © 2023-2024 Vadzim Kavalkou. All rights reserved.
