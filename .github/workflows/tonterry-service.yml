@@ -67,7 +67,7 @@ jobs:
 #        run:
   build:
     runs-on: ubuntu-latest
-    needs: [ "static-analysis" ]
+    needs: [ "static-analysis", "compile", "tests" ]
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -84,7 +84,7 @@ jobs:
         run: ./gradlew --parallel --no-daemon build -x check
   delivery:
     runs-on: ubuntu-latest
-    needs: [ "static-analysis" ]
+    needs: [ "build" ]
     steps:
       - name: checkout
         uses: actions/checkout@v4
