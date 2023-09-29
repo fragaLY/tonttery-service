@@ -1,5 +1,8 @@
-package by.vk.tonttery.api.lottery;
+package by.vk.tonttery.api.lottery.repository;
 
+/**
+ * The status of lottery.
+ */
 public enum Status {
-  CREATED, IN_PROGRESS, COMPLETED, FAILED
+  CREATED, COMPLETED
 }

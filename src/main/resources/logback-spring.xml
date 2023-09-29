@@ -24,7 +24,7 @@
     </root>
   </springProfile>
 
-  <springProfile name="prod">
+  <springProfile name="production">
     <logger level="info" name="jsonLogger">
       <appender-ref ref="json"/>
     </logger>

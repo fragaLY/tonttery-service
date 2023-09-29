@@ -1,1 +1,120 @@
+server:
+  compression:
+    enabled: true
+    mime-types: "application/json"
+  error:
+    whitelabel:
+      enabled: false
+  shutdown: graceful
+  tomcat:
+    threads:
+      max: 32
+      min-spare: 4
 
+spring:
+  main:
+    banner-mode: off
+    web-application-type: servlet
+  cache:
+    type: none
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 100
+    jpa:
+      repositories:
+        bootstrap-mode:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/tonttery?currentSchema=tonttery"
+    username: "postgres"
+    password: "postgres"
+    hikari:
+      minimumIdle: 4 # default: same as maximumPoolSize
+      maximumPoolSize: 8 # cores * 2; default is 10
+      connection-timeout: 35000 #default 30000
+      pool-name: "hikari-pool"
+      idle-timeout: 10000 # default: 600000 (10 minutes)
+      max-lifetime: 35000 # default: 1800000 (30 minutes)
+      keepaliveTime: 30000 # default: 0 (disabled)
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: "tonttery"
+        types:
+          print:
+            banner: false
+  flyway:
+    schemas: tonttery
+    table: tonttery
+    baseline-on-migrate: true
+    out-of-order: true
+    locations:
+      - classpath:db-migrations
+
+management:
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+      show-components: never
+      show-details: never
+      group:
+        readiness:
+          include: readinessState, db
+    metrics.enabled: true
+    prometheus.enabled: true
+  endpoints.web.exposure.include: "*"
+  prometheus.metrics.export.enabled: true
+
+logging.level:
+  ROOT: info
+  by.vk.tonttery: info
+  org.springframework: info
+
+tontterry:
+  telegrambots:
+    enabled: true
+    token: 6558043812:AAHHzyZPs3AR7IAG8jmfWpaagQh0BF2cJrk
+  payments:
+    commission-percentage: 1
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: "jdbc:postgresql://${DB_URL}:${DB_PORT}/${DB_NAME}?${DB_SCHEMA}"
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      minimumIdle: 4 # default: same as maximumPoolSize
+      maximumPoolSize: 8 # cores * 2; default is 10
+      connection-timeout: 35000 #default 30000
+      pool-name: "hikari-pool"
+      idle-timeout: 10000 # default: 600000 (10 minutes)
+      max-lifetime: 35000 # default: 1800000 (30 minutes)
+      keepaliveTime: 30000 # default: 0 (disabled)
+
+server:
+  compression:
+    enabled: true
+    mime-types: "application/json"
+  error:
+    whitelabel:
+      enabled: false
+  shutdown: graceful
+  port: ${SERVER_PORT}

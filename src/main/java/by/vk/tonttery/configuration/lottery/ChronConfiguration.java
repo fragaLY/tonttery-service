@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableScheduling
 @Slf4j
 @RequiredArgsConstructor
-public class LotteryConfiguration implements AsyncConfigurer {
+public class ChronConfiguration implements AsyncConfigurer {
 
   private final TonterryService service;
   private final NotificationService notifier;
@@ -72,7 +72,8 @@ public class LotteryConfiguration implements AsyncConfigurer {
   @Bean(destroyMethod = "shutdown")
   @Override
   public ExecutorService getAsyncExecutor() {
-    return Executors.newVirtualThreadPerTaskExecutor();
+//    return Executors.newVirtualThreadPerTaskExecutor();
+    return Executors.newSingleThreadExecutor();
   }
 
   @Override

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public record Notifier() {
+public record NotificationService() {
 
   public void channel(LotteryResponse lottery) {
     switch (lottery.status()) {

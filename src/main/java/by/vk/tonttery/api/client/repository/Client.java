@@ -1,46 +1,64 @@
-package by.vk.tonttery.api.client.model;
+package by.vk.tonttery.api.client.repository;
 
-import by.vk.tonttery.api.lottery.Lottery;
+import by.vk.tonttery.api.lottery.repository.Lottery;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Accessors;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.relational.core.mapping.Table;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 
-@Table(schema = "tonterry", name = "client")
+/**
+ * The client's entity.
+ */
+@Table(schema = "tonttery", name = "client")
+@Entity
 @Getter
 @Setter
 @ToString
-@Builder
-@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"id", "lotteries"})
 public class Client {
 
-  @Id
-  private UUID id;
-  private Long telegramId;
+  @EmbeddedId
+  private ClientId id;
+
   private String firstName;
+
   private String lastName;
+
   private String telegramUserName;
+
   private Boolean isBot;
+
   private Boolean isPremium;
+
   private String image;
+
   private LocalDateTime authenticatedAt;
-  @CreatedDate
+
+  @ManyToMany(mappedBy = "clients")
+  @OrderBy("startDate")
+  @ToString.Exclude
+  private Set<Lottery> lotteries;
+
+  @Column(name = "created_at", updatable = false)
+  @CreationTimestamp(source = SourceType.DB)
   private LocalDateTime createdAt;
-  @LastModifiedDate
+
+  @UpdateTimestamp(source = SourceType.DB)
   private LocalDateTime updatedAt;
-//  @ToString.Exclude
-//  private Set<ClientLottery> lotteries;
 }
 
