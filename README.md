@@ -3,7 +3,6 @@
 
 //add unit tests
 //add integration tests
-//parallel unit and integration tests on the ci
 //todo vk: add HATEOAS
 //todo vk: add EHACHE
 //todo vk: add resilience4j

@@ -45,12 +45,14 @@ spring:
       max-lifetime: 35000 # default: 1800000 (30 minutes)
       keepaliveTime: 30000 # default: 0 (disabled)
   jpa:
+    show-sql: true
     open-in-view: false
     database-platform: org.hibernate.dialect.PostgreSQL95Dialect
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
+        format_sql: true
         default_schema: "tonttery"
         types:
           print:
@@ -101,6 +103,19 @@ spring:
   config:
     activate:
       on-profile: production
+  jpa:
+    show-sql: false
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+        default_schema: "tonttery"
+        types:
+          print:
+            banner: false
   datasource:
     driverClassName: org.postgresql.Driver
     url: "jdbc:postgresql://${DB_URL}:${DB_PORT}/${DB_NAME}?${DB_SCHEMA}"

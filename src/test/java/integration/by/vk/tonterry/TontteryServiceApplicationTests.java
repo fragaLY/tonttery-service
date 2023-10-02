@@ -1,4 +1,4 @@
-package by.vk.tonttery;
+package by.vk.tonterry;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

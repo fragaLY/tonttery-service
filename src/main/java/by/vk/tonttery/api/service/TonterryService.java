@@ -13,6 +13,7 @@ import by.vk.tonttery.api.client.repository.ClientId;
 import by.vk.tonttery.api.client.repository.ClientRepository;
 import by.vk.tonttery.api.client.response.ClientResponse;
 import by.vk.tonttery.api.client.response.ClientShortResponse;
+import by.vk.tonttery.api.exception.BadRequestException;
 import by.vk.tonttery.api.exception.NotFoundException;
 import by.vk.tonttery.api.lottery.repository.Lottery;
 import by.vk.tonttery.api.lottery.repository.LotteryRepository;
@@ -27,10 +28,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.random.RandomGenerator;
+import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -50,8 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TonterryService {
 
-  private static final RandomGenerator RANDOM_GENERATOR = RandomGenerator.getDefault();
-
   private final ClientRepository clientRepository;
   private final LotteryRepository lotteryRepository;
   private final CalculationService calculationService;
@@ -61,7 +61,6 @@ public class TonterryService {
    *
    * @param type         - the type of lottery. Should not be null.
    * @param creationDate - the date of creation the lottery. Should not be null.
-   *
    * @return the created lottery. Should not be null.
    */
   @NotNull
@@ -81,9 +80,7 @@ public class TonterryService {
    *
    * @param type      - the type of lottery. Should not be null.
    * @param startDate - the date of creation the lottery. Should be in past of present.
-   *
    * @return the awarded lottery. Should not be null.
-   *
    * @throws NotFoundException if the winner or lottery were not found.
    */
   @NotNull
@@ -98,14 +95,24 @@ public class TonterryService {
         startDate).orElseThrow(() -> new NotFoundException(
         "Lottery with start date [%s] and type [%s] not found".formatted(startDate, type)));
 
-    var playersIds = lottery.getClients().parallelStream().map(Client::getId).map(ClientId::getId)
+    if (lottery.getWinner() != null) {
+      throw new BadRequestException(
+          "The winner is already assigned for lottery with id [%s]".formatted(lottery.getId()));
+    }
+
+    var playersIdsList = lottery.getClients().parallelStream().map(Client::getId)
+        .map(ClientId::getId)
         .toList();
-    if (playersIds.isEmpty()) {
+
+    if (playersIdsList.isEmpty()) {
       return LotteryResponse.from(lottery, BigDecimal.ZERO);
     }
 
-    Collections.shuffle(playersIds, RANDOM_GENERATOR);
-    var winnerId = playersIds.parallelStream().skip(RANDOM_GENERATOR.nextInt(playersIds.size()))
+    var playersIds = new ArrayList<>(playersIdsList);
+
+    var random = ThreadLocalRandom.current();
+    Collections.shuffle(playersIds, random);
+    var winnerId = playersIds.parallelStream().skip(random.nextInt(playersIds.size()))
         .findFirst().orElseThrow(() -> new NotFoundException(
             "The winner of lottery with id [%s] not found".formatted(lottery.getId())));
 
@@ -125,7 +132,6 @@ public class TonterryService {
    *
    * @param lotteryId - the id of lottery. Should not be null.
    * @param clientId  - the id of client. Can be null.
-   *
    * @return the lottery. Should not be null.
    */
   @NotNull
@@ -150,9 +156,7 @@ public class TonterryService {
    *
    * @param lotteryId - the id of lottery. Should not be null.
    * @param clientId  - the id of client. Should not be null.
-   *
    * @return the joined lottery. Should not be null.
-   *
    * @throws NotFoundException if the client or lottery were not found.
    */
   @NotNull
@@ -173,9 +177,11 @@ public class TonterryService {
     var lottery = lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)
         .orElseThrow(() -> new NotFoundException(Lottery.class.getSimpleName(), lotteryId));
     var clients = lottery.getClients();
-    clients.add(client);
-    lottery.setClients(clients);
-    lotteryRepository.save(lottery);
+    if (!clients.contains(client)) {
+      clients.add(client);
+      lottery.setClients(clients);
+      lotteryRepository.save(lottery);
+    }
     var prize = calculationService.prize(clients.size());
     return LotteryResponse.from(lottery, lottery.getWinner(), prize, Boolean.TRUE);
   }
@@ -185,9 +191,7 @@ public class TonterryService {
    *
    * @param lotteryId - the id of lottery. Should not be null.
    * @param clientId  - the id of client. Should not be null.
-   *
    * @return the cancelled lottery. Should not be null.
-   *
    * @throws NotFoundException if the client or lottery were not found.
    */
   @NotNull
@@ -208,9 +212,11 @@ public class TonterryService {
     var lottery = lotteryRepository.findById(lotteryId)
         .orElseThrow(() -> new NotFoundException(Lottery.class.getSimpleName(), lotteryId));
     var clients = lottery.getClients();
-    clients.add(client);
-    lottery.setClients(clients);
-    lotteryRepository.save(lottery);
+    if (clients.contains(client)) {
+      clients.remove(client);
+      lottery.setClients(clients);
+      lotteryRepository.save(lottery);
+    }
     var prize = calculationService.prize(clients.size());
     return LotteryResponse.from(lottery, lottery.getWinner(), prize, Boolean.FALSE);
   }
@@ -219,9 +225,7 @@ public class TonterryService {
    * Retrieves a client by client's internal id.
    *
    * @param clientId - the id of client. Should not be null.
-   *
    * @return the client. Should not be null.
-   *
    * @throws NotFoundException if the client was not found.
    */
   @NotNull
@@ -239,7 +243,6 @@ public class TonterryService {
    *
    * @param lotteryId - the id of lottery. Should not be null.
    * @param pageable  - the pagination configuration. Should not be null.
-   *
    * @return the page of lottery clients. Should not be null.
    */
   @NotNull
@@ -258,9 +261,7 @@ public class TonterryService {
    *
    * @param clientId - the id of client. Should not be null.
    * @param pageable - the pagination configuration. Should not be null.
-   *
    * @return the page of client's lotteries. Should not be null.
-   *
    * @throws NotFoundException if the client was not found.
    */
   @NotNull
@@ -279,7 +280,6 @@ public class TonterryService {
    * Retrieves all lotteries.
    *
    * @param pageable - the pagination configuration. Should not be null.
-   *
    * @return the page of all lotteries. Should not be null.
    */
   @NotNull
@@ -295,7 +295,6 @@ public class TonterryService {
    * Overview of the upcoming lotteries.
    *
    * @param startDate - the date of start. Should not be null.
-   *
    * @return the list of upcoming lotteries. Should not be empty.
    */
   @NotEmpty(message = "The amount of upcoming lotteries should not be zero")

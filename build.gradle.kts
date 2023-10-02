@@ -16,7 +16,22 @@ springBoot {
     buildInfo()
 }
 
+application {
+    mainClass = "by.vk.tonttery.Application"
+    applicationName = "tonterry-service"
+}
+
+
 java {
+    sourceSets {
+        test {
+            java.srcDirs(
+                    "src/test/java/unit",
+                    "src/test/java/repository",
+                    "src/test/java/integration"
+            )
+        }
+    }
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
@@ -59,6 +74,7 @@ dependencies {
     //endregion
     //region test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+//    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
     //endregion
 }
 
@@ -73,11 +89,15 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+checkstyle {
+    maxWarnings = 0
+    isIgnoreFailures = false
+}
+
 tasks.withType<Checkstyle>().configureEach {
     reports {
         xml.required.set(false)
         html.required.set(true)
-        html.stylesheet = resources.text.fromFile(projectDir.toString().plus("/google_checks.xml"))
     }
 }
 

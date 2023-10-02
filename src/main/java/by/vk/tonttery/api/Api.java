@@ -35,10 +35,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * The API of application. Self-documented by openapi.
+ * See swagger documentation in README.
  *
  * @param service - the tonttery service with all business logic.
- *
- * @see swagger documentation in README.
  */
 @RestController
 @RequestMapping(value = "api/v1", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -29,11 +29,11 @@ public record CalculationService(
    * The method for calculation of the prize.
    *
    * @param size - the size of lottery attenders. Should be positive.
-   *
    * @return the prize of lottery. Should be positive.
    */
   @PositiveOrZero(message = "The minimal prize should be at least zero")
-  public BigDecimal prize(int size) {
+  public BigDecimal prize(
+      @PositiveOrZero(message = "The minimal prize should be at least zero") int size) {
     return BigDecimal.valueOf(size)
         .multiply(BigDecimal.valueOf(HUNDRED - properties.commissionPercentage()));
   }

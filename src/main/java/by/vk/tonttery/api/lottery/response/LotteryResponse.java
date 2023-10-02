@@ -35,8 +35,8 @@ import java.util.UUID;
  *                               null.
  */
 public record LotteryResponse(@NotNull(message = "The id of lottery should not be null") UUID id,
-                              @NotNull(message = "The winner's id should not be null") UUID winnerId,
-                              @NotBlank(message = "The winner's telegram name should not be blank") String winnerTelegramUserName,
+                              @Nullable UUID winnerId,
+                              @Nullable String winnerTelegramUserName,
                               @NotNull(message = "The type of lottery should not be null") Type type,
                               @NotNull(message = "The status of lottery should not be null") Status status,
                               @NotNull LocalDate startDate,
