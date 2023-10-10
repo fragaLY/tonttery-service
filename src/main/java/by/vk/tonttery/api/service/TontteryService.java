@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * The service for the lottery.
@@ -50,7 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TonterryService {
+public class TontteryService {
 
   private final ClientRepository clientRepository;
   private final LotteryRepository lotteryRepository;
@@ -177,10 +179,16 @@ public class TonterryService {
     var lottery = lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)
         .orElseThrow(() -> new NotFoundException(Lottery.class.getSimpleName(), lotteryId));
     var clients = lottery.getClients();
-    if (!clients.contains(client)) {
-      clients.add(client);
-      lottery.setClients(clients);
+
+    if (CollectionUtils.isEmpty(clients)) {
+      lottery.setClients(Set.of(client));
       lotteryRepository.save(lottery);
+    } else {
+      if (!clients.contains(client)) {
+        clients.add(client);
+        lottery.setClients(clients);
+        lotteryRepository.save(lottery);
+      }
     }
     var prize = calculationService.prize(clients.size());
     return LotteryResponse.from(lottery, lottery.getWinner(), prize, Boolean.TRUE);
@@ -212,7 +220,7 @@ public class TonterryService {
     var lottery = lotteryRepository.findById(lotteryId)
         .orElseThrow(() -> new NotFoundException(Lottery.class.getSimpleName(), lotteryId));
     var clients = lottery.getClients();
-    if (clients.contains(client)) {
+    if (!CollectionUtils.isEmpty(clients) && clients.contains(client)) {
       clients.remove(client);
       lottery.setClients(clients);
       lotteryRepository.save(lottery);
