@@ -9,6 +9,7 @@
 package by.vk.tonterry.configuration.lottery;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -23,13 +24,16 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
 @Tags({@Tag("unit"), @Tag("chron")})
 class ChronConfigurationTest {
 
@@ -39,12 +43,8 @@ class ChronConfigurationTest {
   @Mock
   NotificationService notifier;
 
+  @InjectMocks
   ChronConfiguration configuration;
-
-  @BeforeEach
-  void setup() {
-    configuration = new ChronConfiguration(service, notifier);
-  }
 
   @Test
   @DisplayName("Awarding winners chron event")
@@ -69,7 +69,7 @@ class ChronConfigurationTest {
         Arrays.stream(Type.values()).findAny().get(), LocalDate.now()));
 
     //when
-    notifier.channel(any(LotteryResponse.class));
+    configuration.create();
 
     //then
     verify(notifier, atLeast(1)).channel(any(LotteryResponse.class));
@@ -83,9 +83,9 @@ class ChronConfigurationTest {
         Arrays.stream(Type.values()).findAny().get(), LocalDate.now())));
 
     //when
-    notifier.channel(any(LotteryResponse.class));
+    configuration.overview();
 
     //then
-    verify(notifier, atLeast(1)).channel(any(LotteryResponse.class));
+    verify(notifier, atLeast(1)).channel(anyList());
   }
 }

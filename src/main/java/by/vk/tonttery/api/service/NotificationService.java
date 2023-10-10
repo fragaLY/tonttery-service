@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+// todo vk: cover with tests
 public record NotificationService() {
 
   public void channel(LotteryResponse lottery) {

@@ -41,7 +41,7 @@ public class ChronConfiguration implements AsyncConfigurer {
   @Async
   @Scheduled(cron = "@midnight")
   @Transactional(noRollbackFor = Exception.class)
-  // todo vk: no roll back for notification exceptions
+  // todo vk: no roll back for notification exceptions just retry it
   public void award() {
     log.info("[TONTTERY] Lottery awarding process is started");
     var startDate = LocalDate.now(Clock.systemUTC());
@@ -57,7 +57,7 @@ public class ChronConfiguration implements AsyncConfigurer {
   @Async
   @Scheduled(cron = "@midnight")
   @Transactional(noRollbackFor = Exception.class)
-  // todo vk: no roll back for notification exceptions
+  // todo vk: no roll back for notification exceptions just retry it
   public void create() {
     log.info("[TONTTERY] Lottery creation process is started");
     var now = LocalDate.now(Clock.systemUTC());
@@ -70,7 +70,7 @@ public class ChronConfiguration implements AsyncConfigurer {
   @Async
   @Scheduled(cron = "0 0 18 * * * *")
   @Transactional(noRollbackFor = Exception.class)
-  // todo vk: no roll back for notification exceptions
+  // todo vk: no roll back for notification exceptions just retry it
   public void overview() {
     log.info("[TONTTERY] Lotteries overview process is started");
     var now = LocalDate.now(Clock.systemUTC());
