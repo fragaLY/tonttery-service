@@ -5,15 +5,13 @@
 //add integration tests
 //todo vk: add HATEOAS
 //todo vk: add EHACHE
-//todo vk: add resilience4j
 //add performance tests
+//todo vk: add resilience4j
 //add perf tests to ci
-//add terraform
-//add grype to CI/CD
 //migration to java 21
+//todo vk: migrate to return Executors.newVirtualThreadPerTaskExecutor(); use it for Tomcat and compare performance (try to increase default tomcat pool size)
 
 - [SECURITY-POLICY](/SECURITY.md)
 - [LICENSE](/LICENSE.md)
 
 Copyright © 2023-2024 Vadzim Kavalkou. All rights reserved.
-git

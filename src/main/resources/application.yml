@@ -12,10 +12,6 @@ server:
     whitelabel:
       enabled: false
   shutdown: graceful
-  tomcat:
-    threads:
-      max: 32
-      min-spare: 4
 
 spring:
   main:
@@ -30,12 +26,12 @@ spring:
         max-page-size: 100
     jpa:
       repositories:
-        bootstrap-mode:
+        bootstrap-mode: default
   datasource:
     driverClassName: org.postgresql.Driver
     url: "jdbc:postgresql://localhost:5432/tonttery?currentSchema=tonttery"
-    username: "postgres"
-    password: "postgres"
+    username: "tonttery_user_service"
+    password: "tonttery_user_service_password"
     hikari:
       minimumIdle: 4 # default: same as maximumPoolSize
       maximumPoolSize: 8 # cores * 2; default is 10

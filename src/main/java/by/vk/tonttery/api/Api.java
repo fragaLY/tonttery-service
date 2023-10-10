@@ -12,8 +12,9 @@ import by.vk.tonttery.api.client.response.ClientResponse;
 import by.vk.tonttery.api.client.response.ClientShortResponse;
 import by.vk.tonttery.api.lottery.response.LotteryResponse;
 import by.vk.tonttery.api.lottery.response.LotteryShortResponse;
-import by.vk.tonttery.api.service.TonterryService;
+import by.vk.tonttery.api.service.TontteryService;
 import jakarta.validation.constraints.NotNull;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.springframework.data.domain.Page;
@@ -41,13 +42,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping(value = "api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-public record Api(TonterryService service) {
+public record Api(TontteryService service) {
 
   @GetMapping("/clients/{clientId}")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<ClientResponse> one(
       @NotNull(message = "The id of client should not be null") @PathVariable(name = "clientId") UUID clientId) {
+    var client = service.client(clientId);
     return ResponseEntity.ok().cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS))
+        .lastModified(client.updatedAt().toInstant(ZoneOffset.UTC))
         .body(service.client(clientId));
   }
 

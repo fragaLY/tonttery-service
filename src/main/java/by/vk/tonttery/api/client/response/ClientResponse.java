@@ -25,19 +25,20 @@ import java.util.UUID;
  * @param telegramUserName - the client's telegram username. Should not be blank.
  * @param image            - the client's image url. Can be null.
  * @param authenticatedAt  - the client's authentication date. Should be in the past or present.
+ * @param updatedAt        -  client's the latest updated date time. Should be in the past or present.
  */
 public record ClientResponse(@NotNull(message = "The client's id should not be null") UUID id,
                              @NotBlank(message = "The client's name should not be blank") String name,
                              @NotNull(message = "The client's telegram id should not be null") Long telegramId,
                              @NotBlank(message = "The client's telegram name should not be blank") String telegramUserName,
                              @Nullable String image,
-                             @PastOrPresent(message = "The client's authentication should be in the past or present") LocalDateTime authenticatedAt) {
+                             @PastOrPresent(message = "The client's authentication should be in the past or present") LocalDateTime authenticatedAt,
+                             @PastOrPresent(message = "The client's update date time should be in the past or present") LocalDateTime updatedAt) {
 
   /**
    * The convertor from the client's entity to the client's response.
    *
    * @param entity - the client's entity. Should not be null.
-   *
    * @return the client's response. Should not be null.
    */
   @NotNull(message = "The client's response should not be null")
@@ -45,7 +46,8 @@ public record ClientResponse(@NotNull(message = "The client's id should not be n
       @NotNull(message = "The client's entity should not be null") Client entity) {
     return new ClientResponse(entity.getId().getId(),
         entity.getFirstName() + " " + entity.getLastName(), entity.getId().getTelegramId(),
-        entity.getTelegramUserName(), entity.getImage(), entity.getAuthenticatedAt());
+        entity.getTelegramUserName(), entity.getImage(), entity.getAuthenticatedAt(),
+        entity.getUpdatedAt());
   }
 
 }

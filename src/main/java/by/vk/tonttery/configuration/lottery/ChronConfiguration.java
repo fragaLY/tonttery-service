@@ -10,7 +10,7 @@ package by.vk.tonttery.configuration.lottery;
 
 import by.vk.tonttery.api.lottery.repository.Type;
 import by.vk.tonttery.api.service.NotificationService;
-import by.vk.tonttery.api.service.TonterryService;
+import by.vk.tonttery.api.service.TontteryService;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.concurrent.ExecutorService;
@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ChronConfiguration implements AsyncConfigurer {
 
-  private final TonterryService service;
+  private final TontteryService service;
   private final NotificationService notifier;
 
   @Async
@@ -80,7 +80,6 @@ public class ChronConfiguration implements AsyncConfigurer {
   @Bean(destroyMethod = "shutdown")
   @Override
   public ExecutorService getAsyncExecutor() {
-//    return Executors.newVirtualThreadPerTaskExecutor();
     return Executors.newSingleThreadExecutor();
   }
 

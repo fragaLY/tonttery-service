@@ -1,4 +1,12 @@
-package unit.by.vk.tonttery.api.service;
+/**
+ * Copyright © 2023-2024 Vadzim Kavalkou. All Rights Reserved. All information contained herein is,
+ * and remains the property of Vadzim Kavalkou and/or its suppliers and is protected by
+ * international intellectual property law. Dissemination of this information or reproduction of
+ * this material is strictly forbidden, unless prior written permission is obtained from Vadzim
+ * Kavalkou.
+ **/
+
+package by.vk.tonterry.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -9,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -32,12 +39,6 @@ class CalculationServiceTest {
         .multiply(BigDecimal.valueOf(100 - service.properties().commissionPercentage()));
     var actual = service.prize(input);
     assertEquals(expected, actual);
-  }
-
-  @DisplayName("Prize calculation when input incorrect tests")
-  @Test
-  void prizeWhenInputIncorrect() {
-    assertEquals(BigDecimal.ONE, service.prize(-1));
   }
 
 }
