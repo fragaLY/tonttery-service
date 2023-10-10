@@ -2,7 +2,6 @@ import java.net.URI
 
 plugins {
     java
-    checkstyle
     application
     id("org.springframework.boot") version "3.1.4"
     id("io.spring.dependency-management") version "1.1.3"
@@ -10,7 +9,7 @@ plugins {
 }
 
 group = "by.vk"
-version = "1.0.0-RC"
+version = "1.0.0-RC1"
 
 springBoot {
     buildInfo()
@@ -23,15 +22,6 @@ application {
 
 
 java {
-    sourceSets {
-        test {
-            java.srcDirs(
-                    "src/test/java/unit",
-                    "src/test/java/repository",
-                    "src/test/java/integration"
-            )
-        }
-    }
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
@@ -41,20 +31,17 @@ repositories {
     mavenCentral()
 }
 
-extra["springCloudGcpVersion"] = "4.7.2"
+extra["springCloudGcpVersion"] = "4.8.0"
 extra["springCloudVersion"] = "2022.0.4"
 
 dependencies {
     //region spring
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.springframework:spring-context-indexer")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     //endregion
     //region lombok
     annotationProcessor("org.projectlombok:lombok")
@@ -70,11 +57,14 @@ dependencies {
     //end region
     //region 3rd party
     implementation("com.google.cloud:spring-cloud-gcp-starter")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
 //    implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
     //endregion
     //region test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-//    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
     //endregion
 }
 
@@ -89,31 +79,44 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-checkstyle {
-    maxWarnings = 0
-    isIgnoreFailures = false
-}
-
-tasks.withType<Checkstyle>().configureEach {
-    reports {
-        xml.required.set(false)
-        html.required.set(true)
-    }
+object JVMProps {
+    const val XMX = "512m"
+    const val XMS = "256m"
+    const val XSS = "256k"
+    const val MAX_METASPACE_SIZE = "128m"
+    const val MAX_DIRECT_MEMORY_SIZE = "128m"
+    const val HEAPDUMP_PATH = "/opt/tmp/heapdump.bin"
+    const val MAX_RAM_PERCENTAGE = "80"
+    const val INITIAL_RAM_PERCENTAGE = "50"
 }
 
 jib {
-    setAllowInsecureRegistries(true)
+    setAllowInsecureRegistries(false)
     to {
-        image = System.getenv("GITHUB_REPOSITORY").plus("/")
-                .plus(":")
-                .plus(System.getenv("GITHUB_SHA"))
+        image = "fragaly/tonttery-service"
+        tags = setOf("$version", "latest")
     }
     from {
-        image = "gcr.io/distroless/java17:latest"
+        image = "gcr.io/distroless/java17"
     }
     container {
-        labels.set(mapOf("appname" to application.applicationName, "version" to version.toString(), "owner" to "vadzim.kavalkou@gmail.com"))
+        jvmFlags = listOf(
+                "-Xss${JVMProps.XSS}",
+                "-Xmx${JVMProps.XMX}",
+                "-Xms${JVMProps.XMS}",
+                "-XX:MaxMetaspaceSize=${JVMProps.MAX_METASPACE_SIZE}",
+                "-XX:MaxDirectMemorySize=${JVMProps.MAX_DIRECT_MEMORY_SIZE}",
+                "-XX:MaxRAMPercentage=${JVMProps.MAX_RAM_PERCENTAGE}",
+                "-XX:InitialRAMPercentage=${JVMProps.INITIAL_RAM_PERCENTAGE}",
+                "-XX:+HeapDumpOnOutOfMemoryError",
+                "-XX:HeapDumpPath=${JVMProps.HEAPDUMP_PATH}",
+                "-XX:+UseContainerSupport",
+                "-XX:+OptimizeStringConcat",
+                "-XX:+UseStringDeduplication",
+                "-XX:+ExitOnOutOfMemoryError",
+                "-XX:+AlwaysActAsServerClassMachine")
         ports = listOf("8080")
+        labels.set(mapOf("appname" to application.applicationName, "version" to version.toString(), "maintainer" to "Vadzim Kavalkou <vadzim.kavalkou@gmail.com>"))
         creationTime.set("USE_CURRENT_TIMESTAMP")
     }
 }
