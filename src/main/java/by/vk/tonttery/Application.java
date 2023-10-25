@@ -8,7 +8,6 @@
 
 package by.vk.tonttery;
 
-import by.vk.tonttery.configuration.lottery.TontteryProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,13 +18,13 @@ import org.springframework.cache.annotation.EnableCaching;
 @Slf4j
 @EnableCaching
 @SpringBootApplication
-@ConfigurationPropertiesScan(basePackageClasses = {TontteryProperties.class})
+@ConfigurationPropertiesScan
 public class Application {
 
   public static void main(String[] args) {
     final var context = SpringApplication.run(Application.class, args);
     final var properties = context.getBean(BuildProperties.class);
-    log.info("[TONTERRY] Application version {}", properties.getVersion());
+    log.info("[TONTTERY] Application version {}", properties.getVersion());
   }
 
 }

@@ -15,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties("tonttery.payments")
-public record TontteryProperties(
+public record PaymentProperties(
     @Min(value = 1, message = "The minimal commission for tonttery should be 1 percent")
     @Max(value = 99, message = "The maximum commission for tonttery should be 10 percent")
     int commissionPercentage

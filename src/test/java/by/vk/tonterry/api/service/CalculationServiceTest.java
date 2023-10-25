@@ -11,7 +11,7 @@ package by.vk.tonterry.api.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import by.vk.tonttery.api.service.CalculationService;
-import by.vk.tonttery.configuration.lottery.TontteryProperties;
+import by.vk.tonttery.configuration.lottery.PaymentProperties;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ class CalculationServiceTest {
 
   @BeforeEach
   void setUp() {
-    var properties = new TontteryProperties(1);
+    var properties = new PaymentProperties(1);
     service = new CalculationService(properties);
   }
 

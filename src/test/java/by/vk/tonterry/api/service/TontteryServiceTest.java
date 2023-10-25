@@ -36,10 +36,8 @@ import by.vk.tonttery.api.lottery.response.LotteryShortResponse;
 import by.vk.tonttery.api.service.CalculationService;
 import by.vk.tonttery.api.service.TontteryService;
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -411,7 +409,7 @@ class TontteryServiceTest {
     var clients = Set.of(anotherClient);
     lottery.setClients(clients);
     when(lotteryRepository.findById(lotteryId)).thenReturn(Optional.of(lottery));
-    when(calculationService.prize(1)).thenReturn(BigDecimal.valueOf(0.99d));
+    when(calculationService.prize(clients.size())).thenReturn(BigDecimal.valueOf(0.99d));
     var expected = new LotteryResponse(lotteryId, null, null, Type.DAILY, Status.CREATED, startDate,
         1, BigDecimal.valueOf(0.99d), false);
 
@@ -432,7 +430,7 @@ class TontteryServiceTest {
     var clients = Set.of(client, anotherClient);
     lottery.setClients(clients);
     when(lotteryRepository.findById(lotteryId)).thenReturn(Optional.of(lottery));
-    when(calculationService.prize(1)).thenReturn(BigDecimal.valueOf(1.98d));
+    when(calculationService.prize(clients.size())).thenReturn(BigDecimal.valueOf(1.98d));
     var expected = new LotteryResponse(lotteryId, null, null, Type.DAILY, Status.CREATED, startDate,
         2, BigDecimal.valueOf(1.98d), true);
 
@@ -481,7 +479,7 @@ class TontteryServiceTest {
     when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
     when(lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)).thenReturn(
         Optional.of(lottery));
-    when(calculationService.prize(2)).thenReturn(BigDecimal.valueOf(1.98d));
+    when(calculationService.prize(clients.size())).thenReturn(BigDecimal.valueOf(1.98d));
     var expected = new LotteryResponse(lotteryId, null, null, Type.DAILY, Status.CREATED, startDate,
         2, BigDecimal.valueOf(1.98d), true);
 
@@ -509,7 +507,7 @@ class TontteryServiceTest {
     when(lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)).thenReturn(
         Optional.of(lottery));
     when(lotteryRepository.save(lottery)).thenReturn(lottery);
-    when(calculationService.prize(2)).thenReturn(BigDecimal.valueOf(1.98d));
+    when(calculationService.prize(clients.size())).thenReturn(BigDecimal.valueOf(1.98d));
     var expected = new LotteryResponse(lotteryId, null, null, Type.DAILY, Status.CREATED, startDate,
         2, BigDecimal.valueOf(1.98d), true);
 
@@ -562,7 +560,7 @@ class TontteryServiceTest {
     when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
     when(lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)).thenReturn(
         Optional.of(lottery));
-    when(calculationService.prize(1)).thenReturn(BigDecimal.valueOf(0.99d));
+    when(calculationService.prize(clients.size())).thenReturn(BigDecimal.valueOf(0.99d));
     var expected = new LotteryResponse(lotteryId, null, null, Type.DAILY, Status.CREATED, startDate,
         1, BigDecimal.valueOf(0.99d), false);
 
@@ -589,7 +587,7 @@ class TontteryServiceTest {
     when(clientRepository.findById(clientId)).thenReturn(Optional.of(client));
     when(lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)).thenReturn(
         Optional.of(lottery));
-    when(calculationService.prize(1)).thenReturn(BigDecimal.valueOf(0.99d));
+    when(calculationService.prize(clients.size())).thenReturn(BigDecimal.valueOf(0.99d));
     var expected = new LotteryResponse(lotteryId, null, null, Type.DAILY, Status.CREATED, startDate,
         1, BigDecimal.valueOf(0.99d), false);
 
@@ -880,18 +878,22 @@ class TontteryServiceTest {
     var secondLotteryId = UUID.randomUUID();
     var firstStartDate = LocalDate.now();
     var secondStartDate = LocalDate.of(2023, 10, 2);
+    var client = TestObjects.client(UUID.randomUUID(), 1L, "VK1");
+    var anotherClient = TestObjects.client(UUID.randomUUID(), 2L, "VK2");
     var firstLottery = TestObjects.lottery(firstLotteryId, Type.DAILY, firstStartDate);
+    firstLottery.setClients(Set.of(client));
     var secondLottery = TestObjects.lottery(secondLotteryId, Type.WEEKLY, secondStartDate);
+    secondLottery.setClients(Set.of(client, anotherClient));
     var lotteries = List.of(firstLottery, secondLottery);
     when(lotteryRepository.findByGreaterThanEqualStarDate(startDate)).thenReturn(lotteries);
-    when(calculationService.prize(0)).thenReturn(BigDecimal.ZERO);
     when(calculationService.prize(1)).thenReturn(BigDecimal.valueOf(0.99d));
+    when(calculationService.prize(2)).thenReturn(BigDecimal.valueOf(1.98d));
 
     var expected = List.of(new LotteryResponse(firstLotteryId, null,
-        null, Type.DAILY, Status.CREATED, firstStartDate, 0,
-        BigDecimal.ZERO, false), new LotteryResponse(secondLotteryId, null,
-        null, Type.WEEKLY, Status.CREATED, secondStartDate, 1,
-        BigDecimal.valueOf(0.99d), false));
+        null, Type.DAILY, Status.CREATED, firstStartDate, 1,
+        BigDecimal.valueOf(0.99d), false), new LotteryResponse(secondLotteryId, null,
+        null, Type.WEEKLY, Status.CREATED, secondStartDate, 2,
+        BigDecimal.valueOf(1.98d), false));
 
     //when
     var actual = service.overview(startDate);

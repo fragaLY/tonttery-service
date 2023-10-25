@@ -91,7 +91,7 @@ public class TontteryService {
   public LotteryResponse award(
       @NotNull(message = "The type of lottery should not be null") Type type,
       @PastOrPresent(message = "The awarding lottery date should be in past or present") LocalDate startDate) {
-    log.info("[TONTERRY] Searching a winner for a lottery with date [{}] and type [{}]", startDate,
+    log.info("[TONTTERY] Searching a winner for a lottery with date [{}] and type [{}]", startDate,
         type);
     var lottery = lotteryRepository.findLotteryByTypeAndStatusAndStartDate(type, Status.CREATED,
         startDate).orElseThrow(() -> new NotFoundException(
@@ -142,7 +142,7 @@ public class TontteryService {
   public LotteryResponse lottery(
       @NotNull(message = "The id of lottery should not be null") UUID lotteryId,
       @Nullable UUID clientId) {
-    log.info("[TONTERRY] Searching a lottery with id [{}] for client [{}]", lotteryId, clientId);
+    log.info("[TONTTERY] Searching a lottery with id [{}] for client [{}]", lotteryId, clientId);
     var lottery = lotteryRepository.findById(lotteryId)
         .orElseThrow(() -> new NotFoundException(Lottery.class.getSimpleName(), lotteryId));
     var clients = lottery.getClients();
@@ -173,7 +173,7 @@ public class TontteryService {
   public LotteryResponse join(
       @NotNull(message = "The id of lottery should not be null") UUID lotteryId,
       @NotNull(message = "The client's id should not be null") UUID clientId) {
-    log.info("[TONTERRY] Joining a lottery with id [{}] by client [{}]", lotteryId, clientId);
+    log.info("[TONTTERY] Joining a lottery with id [{}] by client [{}]", lotteryId, clientId);
     var client = clientRepository.findById(clientId)
         .orElseThrow(() -> new NotFoundException(Client.class.getSimpleName(), clientId));
     var lottery = lotteryRepository.findLotteryByIdAndStatus(lotteryId, Status.CREATED)
@@ -214,7 +214,7 @@ public class TontteryService {
   public LotteryResponse cancel(
       @NotNull(message = "The id of lottery should not be null") UUID lotteryId,
       @NotNull(message = "The client's id should not be null") UUID clientId) {
-    log.info("[TONTERRY] Cancelling a lottery with id [{}] by client [{}]", lotteryId, clientId);
+    log.info("[TONTTERY] Cancelling a lottery with id [{}] by client [{}]", lotteryId, clientId);
     var client = clientRepository.findById(clientId)
         .orElseThrow(() -> new NotFoundException(Client.class.getSimpleName(), clientId));
     var lottery = lotteryRepository.findById(lotteryId)
@@ -241,7 +241,7 @@ public class TontteryService {
   @Cacheable(cacheNames = "clients", key = "#clientId")
   public ClientResponse client(
       @NotNull(message = "The client's id should not be null") UUID clientId) {
-    log.info("[TONTERRY] Searching a client with id [{}]", clientId);
+    log.info("[TONTTERY] Searching a client with id [{}]", clientId);
     return clientRepository.findById(clientId).map(ClientResponse::from)
         .orElseThrow(() -> new NotFoundException(Client.class.getSimpleName(), clientId));
   }
@@ -259,7 +259,7 @@ public class TontteryService {
   public Page<ClientShortResponse> lotteryClients(
       @NotNull(message = "The id of lottery should not be null") UUID lotteryId,
       @NotNull(message = "The pagination configuration should not be null") Pageable pageable) {
-    log.info("[TONTERRY] Searching the clients of lottery with id [{}]", lotteryId);
+    log.info("[TONTTERY] Searching the clients of lottery with id [{}]", lotteryId);
     return clientRepository.findAllByLotteriesId(lotteryId, pageable)
         .map(ClientShortResponse::from);
   }
@@ -278,7 +278,7 @@ public class TontteryService {
   public Page<LotteryShortResponse> clientLotteries(
       @NotNull(message = "The client's id should not be null") UUID clientId,
       @NotNull(message = "The pagination configuration should not be null") Pageable pageable) {
-    log.info("[TONTERRY] Searching client's [{}] lotteries", clientId);
+    log.info("[TONTTERY] Searching client's [{}] lotteries", clientId);
     var id = clientRepository.findById(clientId)
         .orElseThrow(() -> new NotFoundException(Client.class.getSimpleName(), clientId)).getId();
     return lotteryRepository.findByClientsId(id, pageable).map(LotteryShortResponse::from);
@@ -295,7 +295,7 @@ public class TontteryService {
   @Cacheable(cacheNames = "clientLotteries", key = "{ null, #pageable }")
   public Page<LotteryShortResponse> lotteries(
       @NotNull(message = "The pagination configuration should not be null") Pageable pageable) {
-    log.info("[TONTERRY] Searching all lotteries");
+    log.info("[TONTTERY] Searching all lotteries");
     return lotteryRepository.findAll(pageable).map(LotteryShortResponse::from);
   }
 
@@ -308,7 +308,7 @@ public class TontteryService {
   @NotEmpty(message = "The amount of upcoming lotteries should not be zero")
   public List<LotteryResponse> overview(
       @FutureOrPresent(message = "The date for upcoming lotteries should be at least in present day") LocalDate startDate) {
-    log.info("[TONTERRY] Overview of the upcoming lotteries");
+    log.info("[TONTTERY] Overview of the upcoming lotteries");
     return lotteryRepository.findByGreaterThanEqualStarDate(startDate).stream().map(it -> {
       var clients = it.getClients();
       var winner = it.getWinner();

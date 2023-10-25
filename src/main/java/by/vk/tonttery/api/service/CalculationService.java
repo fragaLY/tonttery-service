@@ -8,7 +8,7 @@
 
 package by.vk.tonttery.api.service;
 
-import by.vk.tonttery.configuration.lottery.TontteryProperties;
+import by.vk.tonttery.configuration.lottery.PaymentProperties;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public record CalculationService(
-    @NotNull(message = "The tonttery properties should not be null") TontteryProperties properties) {
+    @NotNull(message = "The tonttery properties should not be null") PaymentProperties properties) {
 
   private static final int HUNDRED = 100;
 

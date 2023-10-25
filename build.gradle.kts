@@ -3,7 +3,7 @@ import java.net.URI
 plugins {
     java
     application
-    id("org.springframework.boot") version "3.1.4"
+    id("org.springframework.boot") version "3.1.5"
     id("io.spring.dependency-management") version "1.1.3"
     id("com.google.cloud.tools.jib") version "3.4.0"
 }
@@ -17,7 +17,7 @@ springBoot {
 
 application {
     mainClass = "by.vk.tonttery.Application"
-    applicationName = "tonterry-service"
+    applicationName = "tonttery-service"
 }
 
 
@@ -57,6 +57,7 @@ dependencies {
     //end region
     //region 3rd party
     implementation("com.google.cloud:spring-cloud-gcp-starter")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
     implementation("io.micrometer:micrometer-registry-prometheus")
 
 //    implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")

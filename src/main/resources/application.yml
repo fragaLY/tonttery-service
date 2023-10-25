@@ -18,7 +18,7 @@ spring:
     banner-mode: off
     web-application-type: servlet
   cache:
-    type: none
+    type: CAFFEINE
   data:
     web:
       pageable:
@@ -93,6 +93,9 @@ tontterry:
     token: 6558043812:AAHHzyZPs3AR7IAG8jmfWpaagQh0BF2cJrk
   payments:
     commission-percentage: 1
+  cache:
+    expireAfterAccess: 1
+    expireAfterWrite: 2
 
 ---
 spring:
@@ -118,8 +121,8 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
-      minimumIdle: 4 # default: same as maximumPoolSize
-      maximumPoolSize: 8 # cores * 2; default is 10
+      minimumIdle: 2 # default: same as maximumPoolSize
+      maximumPoolSize: 4 # cores * 2; default is 10
       connection-timeout: 35000 #default 30000
       pool-name: "hikari-pool"
       idle-timeout: 10000 # default: 600000 (10 minutes)
