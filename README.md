@@ -10,12 +10,12 @@ Telegram Web.
 
 | Definition                          | Option |
 | :---                                | :---:  |
-| Average Page Load Time              | `500ms`|
-| Max Page Load Time                  | `1s`   |
-| Average Search Result Time          | `2s`   |
+| Average Page Load Time              | `300ms`|
+| Max Page Load Time                  | `500ms`|
+| Average Search Result Time          | `1s`   |
 | Max Search Result Time              | `3s`   |
-| Max Page Save Time                  | `500ms`|
-| Caching	CDN                         | `95%`  |
+| Max Page Save Time                  | `300ms`|
+| Caching CDN                         | `95%`  |
 | Backend Cache Hit Ratio             | `95%`  |
 | Browser Cache - Cache Hit Ratio     | `95%`  |
 
@@ -49,23 +49,23 @@ Telegram Web.
 
 | Definition                                    | Option |
 | :---                                          | :---:  |
-| High availability	Uptime                      | `99.9` |
-| Health checks (liveness and readiness probes) | `yes` |
+| High availability	Uptime                       | `99.9` |
+| Health checks (liveness and readiness probes) | `yes`  |
 
 ## Scalability
 
 | Definition                          | Option                                     |
 | :---                                | :---:                                      |
-| Number of users in the nearest year | `1000`                                     |
-| Number of users in 1-3 years        | `10000`                                    |
+| Number of users in the nearest year | `10_000`                                   |
+| Number of users in 1-3 years        | `100_000`                                  |
 | Number of users in 2030             | 1% of Telegram Expected Users `15_000_000` |
 
 ##	Capacity
 
 | Definition                                              | Target   | Supported |
 | :---                                                    | :---:    | :---:     |
-| Number of concurrent users                              | `1000`   | `TBD`     |
-| Number of supported concurrent transactions in a second | `10_000` | `TBD`     |
+| Number of concurrent users                              | `10_000` | `TBD`     |
+| Number of supported concurrent transactions in a second | `50_000` | `TBD`     |
 
 ## Data storage volume
 
@@ -125,9 +125,8 @@ Typical latencies:
 - Reading 1 MB from HDD: 20 ms
 - Inter-continental round trip: 150 ms
 
-Taking in advance the targeted transactions per second that should be handled ~10_000, we can calculate the latency by default in non-cached request at max 200ms.
-
-TODO DEFINE THE NETWORK COSTS DEFINITION.
+Taking in advance the targeted transactions per second that should be handled ~50_000, we can calculate the latency by default in non-cached request at max 200ms.
+10_000 clients * 5 lotteries * 600 bytes = 30 mb/s.
 
 - [SECURITY-POLICY](/SECURITY.md)
 - [LICENSE](/LICENSE.md)
