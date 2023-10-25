@@ -4,6 +4,7 @@
 ## Browser compatibility
 
 Google Chrome the latest version and previous.
+Telegram Web.
 
 ## Performance
 
@@ -112,6 +113,7 @@ Total Volume Per Year At Max
 |clients_lotteries | clients * lotteries |   `240GB`  |
 
 In total `~250 GB` per year at max.
+3 replicas and `~750 GB` of data.
 The data will be archived once per year.
 
 ## Bandwidth, Latency, and Throughput
@@ -123,8 +125,7 @@ Typical latencies:
 - Reading 1 MB from HDD: 20 ms
 - Inter-continental round trip: 150 ms
 
-Taking in advance the targeted transactions per second that should be handled ~10_000, we can calculate the latency by default in non-cached request at max
-? ms.
+Taking in advance the targeted transactions per second that should be handled ~10_000, we can calculate the latency by default in non-cached request at max 200ms.
 
 TODO DEFINE THE NETWORK COSTS DEFINITION.
 
