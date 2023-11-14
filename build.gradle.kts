@@ -4,7 +4,7 @@ plugins {
     java
     application
     id("org.springframework.boot") version "3.1.5"
-    id("io.spring.dependency-management") version "1.1.3"
+    id("io.spring.dependency-management") version "1.1.4"
     id("com.google.cloud.tools.jib") version "3.4.0"
 }
 
